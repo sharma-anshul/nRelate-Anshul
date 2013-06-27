@@ -9,6 +9,7 @@ import re
 import requests
 from sklearn import preprocessing
 from urlparse import urlparse
+from os.path import exists
 
 boilerplate = set(["privacy", "contact-us", "contact", "video", "help", "about", "feedback"])
 
@@ -32,28 +33,31 @@ def trainSVM(patterns = None):
     	for pattern in patterns:
 			print pattern
 
-    links, trainVectors, trainLabels, pageLinks = [], [], [], []
-    content = [line[:-1] for line in open("content")]
-    notcontent = [line[:-1] for line in open("notcontent")]
-    cont, ncont = [], []
+	if patterns == None and not exists("svm-classifier"):
+		links, trainVectors, trainLabels, pageLinks = [], [], [], []
+		content = [line[:-1] for line in open("content")]
+		notcontent = [line[:-1] for line in open("notcontent")]
+		cont, ncont = [], []
 
-    print "\nTraining\n"
-    for link in content:
-		vec = getFeatures(link, patterns)
-		trainVectors += [vec]
-		trainLabels += [1.0]
-    
-    for link in notcontent:
-		vec = getFeatures(link, patterns)
-		trainVectors += [vec]
-		trainLabels += [0.0]
-    
-    classifier = svm.SVC()
-    classifier.fit(trainVectors, trainLabels)
-    if patterns == None:
-		pickle.dump(classifier, open("svm-classifier", "w+"))
-    else:
-		pickle.dump(classifier, open("svm-classifier2", "w+"))
+		print "\nTraining\n"
+		for link in content:
+			vec = getFeatures(link, patterns)
+			trainVectors += [vec]
+			trainLabels += [1.0]
+		
+		for link in notcontent:
+			vec = getFeatures(link, patterns)
+			trainVectors += [vec]
+			trainLabels += [0.0]
+		
+		classifier = svm.SVC()
+		classifier.fit(trainVectors, trainLabels)
+		if patterns == None:
+			pickle.dump(classifier, open("svm-classifier", "w+"))
+		else:
+			pickle.dump(classifier, open("svm-classifier2", "w+"))
+	else:
+		print "\nPreliminary classifier already trained.\n"
 
 #Tests the classifier
 def testSVM(linkSet, patterns = None):
@@ -76,6 +80,7 @@ def testSVM(linkSet, patterns = None):
 	
     cont = [link for link in cont if checkBoilerplate(link)]
 
+    print "\nCorrelation Matrix\n"
     print numpy.corrcoef(numpy.transpose(numpy.array(vectors)))
     return sorted(cont, key=lambda x: len(x)), sorted(ncont, key=lambda x: len(x))
 

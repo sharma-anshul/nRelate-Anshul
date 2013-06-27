@@ -33,7 +33,8 @@ def getPatterns(urls):
 
 		# for each regex counts how many URLs it matches
 		for path in pathPatterns:
-				temp = formatPath(path)
+				temp = path
+				#temp = formatPath(path)
 				temp = temp.replace("-", "\-")
 				for url in urls:
 						#if temp.startswith("/\\"):

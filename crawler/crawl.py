@@ -25,7 +25,7 @@ class crawler():
 			print "%d links crawled" % (len(linkSet)) #prints number of links crawled so far
 			if len(linkSet) in timesSeen:
 				timesSeen[len(linkSet)] += 1
-				if timesSeen[len(linkSet)] >= 5:
+				if timesSeen[len(linkSet)] >= 10:
 					print "Unable to download URLs"
 					break
 			else:
