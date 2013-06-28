@@ -11,7 +11,7 @@ from sklearn import preprocessing
 from urlparse import urlparse
 from os.path import exists
 
-boilerplate = set(["privacy", "contact-us", "contact", "video", "help", "about", "feedback"])
+boilerplate = set(['privacy', 'contact-us', 'contact', 'video', 'videos', 'help', 'about', 'feedback','tag', 'category', 'user', 'by_tag', 'by_date', 'author', 'taxonomy', 'label', 'terms-of-service', 'privacy-policy', 'printmail', 'print', 'about-us', 'about_us', 'sitemap','?author', '?tag', '?category', '?replytocom', 'rss.'])
 
 def checkBoilerplate(link):
 	global boilerplate
