@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 from bs4.element import Tag
 from download import get
 
+
 """Usage: >>> domSimilarity.getSimilarityValue("http://cnn.com", "http://bbc.co.uk")
           >>> 0.625
 """
