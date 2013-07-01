@@ -23,11 +23,11 @@ def getPatterns(urls):
 		paths = sorted(paths)
 		# form tree using actual components of URL
 		pathTree = getPathTree(paths)
-		
+
 		tempPath, pathPatterns = "", {}
 		# converts components of the tree to regex
 		getPaths(tempPath, pathTree, pathPatterns)	
-		
+
 		pathCount = {}
 		pathDict = {}
 
@@ -61,7 +61,7 @@ def getPatterns(urls):
 def formatPath(path):
 		pathParts = path.split("/")
 		newPathParts = ['', pathParts[1]]
-		for section in pathParts[2:]:
+		for section in pathParts:
 				newPathParts += [formatSection(section)]
 
 		return "/".join(newPathParts)
@@ -163,7 +163,7 @@ def formatPathTree(parent, newParent):
 				for child in children:
 						section = child
 						grandChildren = children[child].getChildren()
-						if len(children) > 1 and len(grandChildren) <= 1:
+						if len(children) > 1 and not (parent.value == None or parent.value == ""):
 								section = formatSection(section)
 						
 						if section == "NUM":

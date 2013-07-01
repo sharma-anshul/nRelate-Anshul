@@ -21,7 +21,7 @@ def getSimilarity(dom1, dom2):
 		dom1Children = getChildren(dom1)
 		dom2Children = getChildren(dom2)
 
-		if len(dom1Children) == 0 and len(dom2Children) == 0:
+		if len(dom1Children) == 0 and len(dom2Children) == 0 and dom1.name == dom2.name:
 				return 1.0
 		else:
 				match = matchTags(dom1Children, dom2Children)
