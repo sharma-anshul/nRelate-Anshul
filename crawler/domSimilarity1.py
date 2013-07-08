@@ -1,8 +1,11 @@
 from bs4 import BeautifulSoup
 from bs4.element import Tag
+from download import get
 
 #Helper function for getSimilarity
-def areSimilar(graph1, graph2):
+def getSimilarityValue(url1, url2):
+		graph1 = get(url1)
+		graph2 = get(url2)
 		dom1 = BeautifulSoup(graph1.text, "html5lib")
 		dom2 = BeautifulSoup(graph2.text, "html5lib")
 		
@@ -13,29 +16,21 @@ def getSimilarity(dom1, dom2):
 		dom1Children = getChildren(dom1)
 		dom2Children = getChildren(dom2)
 
-		if len(dom1Children) == 0 and len(dom2Children) == 0:
-				return True
+		if len(dom1Children) == 0 and len(dom2Children) == 0 and dom1.name == dom2.name:
+				return 1.0
 		else:
-				cutoff = 0.5
-				matchedId, match = matchTags(dom1Children, dom2Children)
-				if matchedId:
-						cutoff = 0.05
+				match = matchTags(dom1Children, dom2Children)
+
 				#print float(len(match))/len(dom1Children), float(len(match))/len(dom2Children)
-				if (len(dom1Children) == 0 or len(dom2Children) == 0) or len(match) == 0:
-						"""if abs(len(dom1Children) - len(dom2Children)):
-								return True
-						else:
-								return False"""
-						return True
-				#print float(len(match))/len(dom1Children), float(len(match))/len(dom2Children)
-				elif float(len(match))/len(dom1Children) >= cutoff or float(len(match))/len(dom2Children) >= cutoff:
-						similar = True
+				if not (len(dom1Children) == 0 or len(dom2Children) == 0 or len(match) == 0):
+						similarity = 0.0
 						for child1, child2 in match:
-								similar = similar and getSimilarity(child1, child2)
+								similarity = similarity + getSimilarity(child1, child2)		                         
 								#print similar, child1.name, child2.name
-						return similar
+						return similarity/len(match)
+				#print float(len(match))/len(dom1Children), float(len(match))/len(dom2Children)
 				else:
-						return False
+						return 0.0
 
 #Returns immediate children of the node 
 def getChildren(dom):
@@ -86,7 +81,7 @@ def matchTags(tags1, tags2):
 						if "id" in larger[ind].attrs:
 						        otherId = larger[ind]["id"]
 						if not tagId == None and not otherId == None and tagId == otherId:
-								print tagId, otherId
+								#print tagId, otherId
 								match += [(tag, larger[ind])]
 								largeIndex = ind + 1
 								idMatched = True
@@ -101,4 +96,4 @@ def matchTags(tags1, tags2):
 								match += [(tag, larger[ind])]
 								largeIndex = ind+1
 								break
-		return (matchedId, match)
+		return match

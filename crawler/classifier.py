@@ -10,6 +10,7 @@ import requests
 from sklearn import preprocessing
 from urlparse import urlparse
 from os.path import exists
+from domSimilarity import getSimilarityValue
 
 boilerplate = set(['privacy', 'contact-us', 'contact', 'video', 'videos', 'help', 'about', 'feedback', 'tag', 'tags', 'category', 'user', 'by_tag', 'by_date', 'author', 'taxonomy', 'comments', 'label', 'terms-of-service', 'privacy-policy', 'printmail', 'print', 'about-us', 'about_us', 'sitemap','?author', '?tag', '?category', '?replytocom', 'rss.'])
 
@@ -79,6 +80,10 @@ def testSVM(linkSet, patterns = None):
 			ncont += [link]
 	
     cont = [link for link in cont if checkBoilerplate(link)]
+    #ones, zeros = clusterSimilar(cont)
+    
+    #cont = ones
+    #ncont += zeros
 
     print "\nCorrelation Matrix\n"
     print numpy.corrcoef(numpy.transpose(numpy.array(vectors)))
@@ -176,3 +181,26 @@ def getText(link):
 	if extractor != None:
 		text = extractor.getText()
 	return text
+
+def clusterSimilar(ones):
+	similarityDict = {}
+	cluster1, cluster2 = [], []
+	for doc1 in ones:
+		simVal = 0.0
+		for doc2 in ones:
+			if not doc1 == doc2:
+				val = 0.0
+				if (doc1, doc2) not in similarityDict:
+					val = getSimilarityValue(doc1, doc2)
+					similarityDict[(doc2, doc1)] = val
+				else:
+					val = similarityDict[(doc1, doc2)]
+				simVal += val
+				#print doc1, simVal
+		simVal /= (len(ones) - 1)
+		print doc1, simVal
+		if simVal > 0.98:
+			cluster1 += [doc1]
+		else:
+			cluster2 += [doc1]
+	return cluster1, cluster2
