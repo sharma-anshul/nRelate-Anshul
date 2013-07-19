@@ -75,7 +75,10 @@ def testSVM(linkSet, patterns = None):
 		vectors += [vec]
 		result = classifier.predict(vec)
 		if result == 1.0:
-			cont += [link]
+			if link.endswith(".htm"):
+				cont += [link + 'l']
+			else:
+				cont += [link]
 		else:
 			ncont += [link]
 	

@@ -70,12 +70,12 @@ def collatePatterns(patterns, pathDict):
 								urls2 = set(pathDict[pattern2])
 								intersection = urls1.intersection(urls2)
 								
-								print pattern1, pattern2, len(intersection), len(urls1), len(urls2)
+								#print pattern1, pattern2, len(intersection), len(urls1), len(urls2)
 
 								if len(intersection) == len(urls2) or len(intersection) == len(urls1):
 										temp = pattern1 if len(urls2) > len(urls1) else pattern2
 										unrequired += [temp]
-				print unrequired	
+				#print unrequired	
 				similarPatts[firstPart] = [patt for patt in similarPatts[firstPart] if patt not in unrequired]
 				collated += similarPatts[firstPart]
 		return collated
