@@ -12,12 +12,10 @@ queueLock = multiprocessing.Lock()
 pages = {}
 
 class process(multiprocessing.Process):
-		def __init__(self, links, workQueue, returnQueue, name):
+		def __init__(self, links, name):
 				multiprocessing.Process.__init__(self)
 				self.links = links
 				self.name = name
-				self.workQueue = workQueue
-				self.returnQueue = returnQueue
 		
 		def run(self):
 				global workQueue
@@ -30,11 +28,12 @@ class process(multiprocessing.Process):
 								print self.name, link
 								queueLock.release()
 								returnQueue.put(getDistMat(link, self.links))
+								time.sleep(1)
 						else:
 								print "done"
+								#multiprocessing.Event
 								queueLock.release()
 								break
-						time.sleep(1)
 
 
 def getDistanceMatrix(links):
@@ -49,14 +48,20 @@ def getDistanceMatrix(links):
 		processes = []
 
 		for i in range(10):
-				proc = process(links, workQueue, returnQueue, "Process: " + str(i))
+				proc = process(links, "Process: " + str(i))
 				proc.start()
 				processes += [proc]
 
-		#for proc in processes:
-		#		proc.join()
+		while not workQueue.empty():
+				time.sleep(1)
 
-		return returnQueue
+		if workQueue.empty():
+				for proc in processes:
+						proc.terminate()
+		returnList = []
+		while not returnQueue.empty():
+				returnList += [returnQueue.get()]
+		return returnList
 
 def getPages(links):
 		pages = {}
